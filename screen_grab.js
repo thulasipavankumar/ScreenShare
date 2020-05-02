@@ -16,7 +16,8 @@ let avialbleChatrooms = {};
 //     res.sendFile(__dirname + '/public/html/index.html');
 //  })
 app.get('/', (req, res) => {
-    res.redirect("/room" + getRandomText(5));
+   
+    res.sendFile(__dirname + '/public/html/screen.html');
 })
 app.get(/room/, function (req, res) {
     console.log(req.originalUrl);
@@ -88,7 +89,15 @@ wss1.on('connection', function connection(ws) {
             screenshot({ format: 'jpg' }).then((img) => {
                 // img: Buffer filled with jpg goodness
                 // ...
+                let buff = new Buffer(img);
+                let base64data = buff.toString('base64');
+                let jsonMsg = {};
+                jsonMsg.message = data;
+                jsonMsg.origin = client.origin;
+                jsonMsg.image = base64data;
+                client.send(JSON.stringify(jsonMsg));
             }).catch((err) => {
+                console.log("error in promise",err)
                 // ...
             })
 
@@ -110,6 +119,7 @@ server.on('upgrade', function upgrade(request, socket, head) {
 
         /////////////////////////////////////
         console.log("Got an upgrade request")
+        return;
         const pathname = url.parse(request.url).pathname.substr(1);
         if (!authenticate(request)) {
             console.log("destorying the socket")

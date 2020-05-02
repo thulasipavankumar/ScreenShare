@@ -1,24 +1,138 @@
-var displayImage = function (imageData) {
+const displayImage = function (imageData) {
 
     try {
-        var decodedMessage = decodeMessage(msg.data); //made changes
-        var jsonValue = decodedMessage.json;
-        var jsonCoreContent = JSON.parse(jsonValue).value;
-        var jsonData = JSON.parse(jsonValue);
-        if ((jsonCoreContent).indexOf("image") > -1) {
-            initializeCommandSocket();
-            var base64ImageData = "data:image/jpg;base64," + decodedMessage.image;
-            var deviceID = Listener.currentID;
-            drawImageBasedOnData(base64ImageData, deviceID);
-            if (!gotImage) {
-                gotImage = true;
-                resetScreenLoaderIcon();
-            }
-        } 
+       
+        drawImageBasedOnData("data:image/jpg;base64," +imageData);
+       
     } catch (ex) {
-        isCanvasBusy = false;
-        logger.logerror(ex.message);
+        console.log("error in drawing data",ex)
     }
+}
+
+var drawImageBasedOnData = function (base64ImageData) {
+    getNewImageElement(base64ImageData,).then(function (value) {
+        var obj = {
+        base64ImageData: base64ImageData
+        
+    };
+        drawImageFromString(value);
+    }).catch(function (err) {
+        isCanvasBusy = false;
+        console.log("error in resolving image " + err);
+    });
+}
+var drawImageFromString = function (obj) {
+
+    var canvasNJB = document.getElementById("canvas");
+    var ctx = canvasNJB.getContext("2d");
+    try {
+        
+        var height = 637;
+        var width = 1019;
+        var xBound = 0;
+        var yBound = 0;
+        canvasNJB.height = height;
+        canvasNJB.width = width;
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = false;
+        ///* pavan   
+        ctx.drawImage(obj.imageElement, xBound, yBound, width, height);
+    } catch (err) {
+        logger.log("error in drawing image: " + err.message);
+    }
+}
+function _base64ToArrayBuffer(base64) {
+    var binary_string = window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+function getNewImageElement(imageSrc, deviceID) {
+    var obj = {
+        imageElement:new Image()
+       
+    };
+    return new Promise(function (resolve, reject) {
+        
+
+        obj.imageElement.onload = function () {
+            resolve(obj);
+            disposeImage(obj.imageElement);
+        };
+
+        obj.imageElement.src = imageSrc;
+
+    });
+}
+function disposeImage(imageElement) {
+
+    try {
+        imageElement.remove();
+    } catch (error) {
+      //  console.log("error in removing" + error.message);
+    } finally {
+        imageElement = null;
+    }
+}
+
+const decodeMessage =  buffer  =>{
+        
+    var _String = "";
+    var arr = new Uint8Array(buffer);
+    var a = String.fromCharCode(arr[2]);
+    var a10 = String.fromCharCode(arr[1]);
+    var a100 = String.fromCharCode(arr[0]);
+    var stringLength = parseInt(a100 + a10 + a);
+    for (var i = 3; i < stringLength + 3; i++)
+        _String = _String + String.fromCharCode(arr[i]);
+    
+    base = getImageFromBinaryData(arr,stringLength);
+
+    return {
+        //binary: sliceArr,
+        image: base,
+        json: _String
+    };
+}
+function getImageFromBinaryData(arr,stringLength){
+//     var offset = 3; // Ignore first 3 bytes of data as they represent the length of json data in the byte array
+//    var nb = arr.length - offset;
+//    offset = 3 + stringLength;
+//    if (nb < 4) {
+//        return null;
+//    }
+    let offset = 0;
+   var b0 = arr[offset];
+   var b1 = arr[offset + 1];
+   var b2 = arr[offset + 2];
+   var b3 = arr[offset + 3];
+
+   if (b0 === 0x89 && b1 === 0x50 && b2 === 0x4E && b3 === 0x47) {
+       mime = 'image/png';
+   } else if (b0 === 0xff && b1 === 0xd8) {
+       mime = 'image/jpeg';
+   } else if (b0 === 0x47 && b1 === 0x49 && b2 === 0x46) {
+       mime = 'image/gif';
+   } else {
+       logger.logerror("failed to identify the mime type, image is broken");
+       image = null;
+       return null;
+   }
+
+   var binary = "";
+
+   for (var i = 0; i < nb; i++) {
+       binary += String.fromCharCode(arr[offset + i]);
+   }
+
+   var base = window.btoa(binary);
+
+  // var sliceArr = arr.slice(offset);
+   return base;
 }
 
 /*
@@ -79,10 +193,13 @@ let onOpen = function (msg) {
 var gotMessage = function (msg) {
     let receivedData = JSON.parse(msg.data);
     let recievedMessage = receivedData.message;
+    let recievedImage = receivedData.image;
 
     if (recievedMessage !== undefined) {
         // displayInTextBox("displayArea", recievedMessage.replace(/\n/g, '<br>'));
         displayMessageInDivChatBox(recievedMessage.replace(/\n/g, '<br>'));
+    }if(recievedImage!==undefined){
+        displayImage(recievedImage)
     }
 }
 let increment = 0;
