@@ -1,0 +1,39 @@
+{
+  "name": "first-node-app",
+  "version": "1.0.0",
+  "description": "hobby project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thulasipavankumar/first-node-app.git"
+  },
+  "keywords": [
+    "chat",
+    "websocket"
+  ],
+  "engines": {
+    "node": "12.16.x",
+    "npm": "6.x"
+  },
+  "author": "pavan kumar tulasi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thulasipavankumar/first-node-app/issues"
+  },
+  "homepage": "https://github.com/thulasipavankumar/first-node-app#readme",
+  "dependencies": {
+    "desktop-screenshot": "^0.1.1",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "url": "^0.11.0",
+    "ws": "^7.2.3"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
+  }
+}
