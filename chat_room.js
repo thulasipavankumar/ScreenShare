@@ -38,11 +38,12 @@ class chat_room {
   }
   clientOnMessage = (data) => {
     //https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
-    let jsonMsg = JSON.parse(data);
-    if (jsonMsg.message !== undefined)
-      this.sendMsgToAllUsers(jsonMsg.message);
-    else
-      this.sendMsgToAllUsers(jsonMsg);
+    // let jsonMsg = JSON.parse(data);
+    // if (jsonMsg.message !== undefined)
+    //   this.sendMsgToAllUsers(jsonMsg.message);
+    // else
+    //   this.sendMsgToAllUsers(jsonMsg);
+    this.sendRawMsgToAllUsers(data);
   }
   sendMsgToAllUsers = (data) => {
     this.removeStaleUsersFromTheList();
@@ -50,6 +51,15 @@ class chat_room {
       let jsonMsg = {};
       jsonMsg.message = data;
       jsonMsg.origin = client.origin;
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(jsonMsg));
+      }
+    })
+  }
+  sendRawMsgToAllUsers = (data) => {
+    this.removeStaleUsersFromTheList();
+    this.availableUsers.map(client => {
+      let jsonMsg = JSON.parse(data);
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(jsonMsg));
       }

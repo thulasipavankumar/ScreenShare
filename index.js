@@ -6,7 +6,6 @@ const WebSocket = require('ws')
 const chat_room = require('./chat_room');
 const url = require('url');
 const uuid = require('uuid');
-
 const port = process.env.PORT || 8080
 const app = express()
 var server = require('http').createServer(app);
@@ -15,7 +14,6 @@ server.listen(port);
 let avialbleChatrooms = {};
 const sessionParser = session({
     saveUninitialized: false,
-    secret: '$eCuRiTy',
     resave: false
   });
   app.use(sessionParser);  
@@ -23,6 +21,10 @@ app.get('/', (req, res) => {
    
     res.sendFile(__dirname + '/public/html/screen.html');
 })
+app.get(/pavan/, function (req, res) {
+    console.log(req.originalUrl);
+    res.sendFile(__dirname + '/public/html/screen.html');
+  })
 app.get('/session',(req,res)=>{
     const id = uuid.v4();
     console.log(`Updating session for user ${id}`);
@@ -86,39 +88,9 @@ const authenticate = () => {
     //request.headers.host.includes("localhost")
     return true;
 }
-///////////////////////////////////
-const wss1 = new WebSocket.Server({ noServer: true });
-const wss2 = new WebSocket.Server({ noServer: true });
-
-wss1.on('connection',  (ws,request) => {
-
-        ws.on('error', ()=>{
-
-        });
-        ws.on('close', (code, data) => {
-            console.log("closing code:" + code, data)
-        });
-        ws.on('message', (data) => {
-            
-
-        });
-
-});
-
-/////////////////////////////////
 
 server.on('upgrade', function upgrade(request, socket, head) {
     try {
-        ///////////////////////////////////////
-        wss1.handleUpgrade(request, socket, head, function done(ws) {
-            wss1.emit('connection', ws, request);
-        });
-
-
-
-        /////////////////////////////////////
-        console.log("Got an upgrade request")
-        return;
         const pathname = url.parse(request.url).pathname.substr(1);
         if (!authenticate(request)) {
             console.log("destorying the socket")
