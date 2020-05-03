@@ -1,0 +1,6 @@
+{
+    "server_address":"https://screen-share-kotu.herokuapp.com/createSession",
+    "server":"https://screen-share-kotu.herokuapp.com/",
+    "secret":"pavan",
+    "session_name":"pavan-MacBook-Air"
+}
