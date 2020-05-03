@@ -168,8 +168,8 @@ function init() {
     openConnection();
     initializeHandlers();
     var button = document.getElementById("sendButton");
-    button.onclick = sendMessageToServer;
-    document.getElementById("textArea").value = ""
+   // button.onclick = sendMessageToServer;
+    //document.getElementById("textArea").value = ""
 }
 this.openConnection = function () {
     var protocolRequest = "ws";

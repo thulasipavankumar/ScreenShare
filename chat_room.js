@@ -1,4 +1,6 @@
 const WebSocket = require('ws');
+const screenshot = require('screenshot-desktop');
+           
 class chat_room {
   roomName;
   availableUsers = [];

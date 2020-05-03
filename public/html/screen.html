@@ -2,11 +2,12 @@
 <html>
 
 <head>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="icon" type="image/png" href="../images/screen.png">
     <title>Private Chat room</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="../css/button.css">
-    <script src="../js/screen.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="../js/screen.js"></script> 
     <script>
         /*
         MIT License
@@ -37,11 +38,6 @@ SOFTWARE.
 </head>
 
 <body onload="init();">
-    <div>
-        <textarea id="textArea">
-            </textarea>
-        <button class="button mbtn green" type="button" id="sendButton">send Message</button>
-    </div>
     <div id="displayArea">
         <canvas id="canvas">
             </canvas>

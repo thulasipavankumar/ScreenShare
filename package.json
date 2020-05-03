@@ -26,11 +26,14 @@
   },
   "homepage": "https://github.com/thulasipavankumar/first-node-app#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "desktop-screenshot": "^0.1.1",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "http": "0.0.1-security",
     "screenshot-desktop": "^1.12.0",
     "url": "^0.11.0",
+    "uuid": "^8.0.0",
     "ws": "^7.2.3"
   },
   "optionalDependencies": {

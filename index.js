@@ -1,9 +1,11 @@
 
 const express = require('express')
+const session = require('express-session');
 const http = require('http')
 const WebSocket = require('ws')
 const chat_room = require('./chat_room');
 const url = require('url');
+const uuid = require('uuid');
 
 const port = process.env.PORT || 8080
 const app = express()
@@ -11,23 +13,32 @@ var server = require('http').createServer(app);
 app.use(express.static(__dirname + '/public'));
 server.listen(port);
 let avialbleChatrooms = {};
-// app.get('/',  (req, res) =>{
-//     console.log(req.originalUrl);
-//     res.sendFile(__dirname + '/public/html/index.html');
-//  })
+const sessionParser = session({
+    saveUninitialized: false,
+    secret: '$eCuRiTy',
+    resave: false
+  });
+  app.use(sessionParser);  
 app.get('/', (req, res) => {
    
     res.sendFile(__dirname + '/public/html/screen.html');
 })
-app.get(/room/, function (req, res) {
-    console.log(req.originalUrl);
-    res.sendFile(__dirname + '/public/html/index.html');
+app.get('/session',(req,res)=>{
+    const id = uuid.v4();
+    console.log(`Updating session for user ${id}`);
+    req.session.userId = id;
+    res.send({ result: 'OK', message: 'Session updated' });
 })
-const getRandomText = (digits) => {
-    digits = digits ? digits : 7;
-    let r = Math.random().toString(36).substring(digits);
-    return r;
-}
+
+app.post('/createSession', function (req, res) {
+    if(req.data.key!=="pavan"){
+        res.sendStatus(401);
+        return;
+    }
+    createAPrivateChatRoom(req.data.session_name);
+    res.sendStatus(201);
+})
+
 const createAPrivateChatRoom = (roomName) => {
     //ceate and return a new chat room;
     //let r = Math.random().toString(36).substring(7);
@@ -37,7 +48,9 @@ const createAPrivateChatRoom = (roomName) => {
     avialbleChatrooms[roomName] = chatRoomObj
     return chatRoomObj;
 }
-const doesChatRoomExsists = roomName => avialbleChatrooms.hasOwnProperty(roomName);
+const doesChatRoomExsists = roomName => {
+    return (map.get(roomName)!==undefined)
+}
 const addRoomToGivenName = name => "room" + name;
 
 const addUserToTheExsistingChatRoom = (user, chatRoom) => {
@@ -77,7 +90,7 @@ const authenticate = () => {
 const wss1 = new WebSocket.Server({ noServer: true });
 const wss2 = new WebSocket.Server({ noServer: true });
 
-wss1.on('connection',  ws => {
+wss1.on('connection',  (ws,request) => {
 
         ws.on('error', ()=>{
 
@@ -86,21 +99,7 @@ wss1.on('connection',  ws => {
             console.log("closing code:" + code, data)
         });
         ws.on('message', (data) => {
-            const screenshot = require('screenshot-desktop');
-            screenshot({ format: 'jpg' }).then((img) => {
-                // img: Buffer filled with jpg goodness
-                // ...
-                let buff = new Buffer(img);
-                let base64data = buff.toString('base64');
-                let jsonMsg = {};
-                jsonMsg.message = data;
-                jsonMsg.origin = ws.origin;
-                jsonMsg.image = base64data;
-                ws.send(JSON.stringify(jsonMsg));
-            }).catch((err) => {
-                console.log("error in promise",err)
-                // ...
-            })
+            
 
         });
 
@@ -130,15 +129,15 @@ server.on('upgrade', function upgrade(request, socket, head) {
             if (doesChatRoomExsists(pathname)) {
                 obj = addConnectionToExsistingRoom(pathname);
                 console.log("added new user to  room: " + pathname)
-            } else {
-                obj = createAPrivateChatRoom(pathname);
-                console.log("created  new  room: " + pathname)
+                let wssObj = obj.getMasterConnection();
+                obj.sendMsgToAllUsers("new user has joined the chat");
+                wssObj.handleUpgrade(request, socket, head, (ws) => {
+                    wssObj.emit('connection', ws, request);
+                });
+            }else{
+                socket.destroy();
             }
-            let wssObj = obj.getMasterConnection();
-            obj.sendMsgToAllUsers("new user has joined the chat");
-            wssObj.handleUpgrade(request, socket, head, (ws) => {
-                wssObj.emit('connection', ws, request);
-            });
+           
         }
     } catch (err) {
         console.log("error in req upgrade", err);
