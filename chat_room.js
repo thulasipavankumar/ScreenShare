@@ -66,7 +66,13 @@ class chat_room {
     })
   }
   removeStaleUsersFromTheList = () => {
-    this.availableUsers = this.availableUsers.filter(user => (user.readyState === 0 || user.readyState === 1));
+    this.availableUsers = this.availableUsers.filter(user => {
+      if(user.readyState === 0 || user.readyState === 1){
+        return true;
+      }else
+      return false;
+    });
+   // console.log("after removing stale users count: "+this.availableUsers.length);
   }
 
   clientOnClose = (closingCode, reason) => {

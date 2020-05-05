@@ -9,7 +9,7 @@ lerna-debug.log*
 no_commit.*
 #mac dependencies
 .DS_Store
-
+.vscode/
 #microsoft code file
 Untitled.code-workspace
 
