@@ -193,7 +193,7 @@ this.initializeHandlers = function () {
 }
 let onOpen = function (msg) {
     console.log("new Connection");
-    displayInTextBox("displayArea", "Welcome to Screen Share, <br>( ͡° ͜ʖ ͡°) Copyright Pavan Kumar Tulasi (▀̿Ĺ̯▀̿ ̿)")
+    displayInTextBox("displayArea", "Welcome to Screen Share, <br>Copyright  <h3>Pavan Kumar Tulasi............¯\\_(ツ)_/¯  <h3> ")
 }
 var gotMessage = function (msg) {
     let receivedData = JSON.parse(msg.data);
