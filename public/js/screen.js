@@ -193,7 +193,7 @@ this.initializeHandlers = function () {
 }
 let onOpen = function (msg) {
     console.log("new Connection");
-    displayInTextBox("displayArea", "Welcome to Chat Arena , <br>Let's the fun Begin <br>!(^_^)!")
+    displayInTextBox("displayArea", "Welcome to Screen Share, <br>( ͡° ͜ʖ ͡°) Copyright Pavan Kumar Tulasi (▀̿Ĺ̯▀̿ ̿)")
 }
 var gotMessage = function (msg) {
     let receivedData = JSON.parse(msg.data);
