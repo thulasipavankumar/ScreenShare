@@ -8,15 +8,17 @@ const url = require('url');
 const uuid = require('uuid');
 const port = process.env.PORT || 8080
 const app = express()
-var server = require('http').createServer(app);
+let server = require('http').createServer(app);
 app.use(express.static(__dirname + '/public'));
+app.use(express.json());
 server.listen(port);
-let avialbleChatrooms = {};
+//let avialbleChatrooms = {};
 const sessionParser = session({
     saveUninitialized: false,
     resave: false
   });
-  app.use(sessionParser);  
+ // app.use(sessionParser);  
+ let  avialbleChatrooms= new Map()
 app.get('/', (req, res) => {
    
     res.sendFile(__dirname + '/public/html/screen.html');
@@ -33,11 +35,12 @@ app.get('/session',(req,res)=>{
 })
 
 app.post('/createSession', function (req, res) {
-    if(req.data.key!=="pavan"){
+    let data = req.body;
+    if(data.key!=="pavan"){
         res.sendStatus(401);
         return;
     }
-    createAPrivateChatRoom(req.data.session_name);
+    createAPrivateChatRoom(data.session_name);
     res.sendStatus(201);
 })
 
@@ -47,11 +50,12 @@ const createAPrivateChatRoom = (roomName) => {
     // console.log("random", r);
     // let newChatRoomName =  addRoomToGivenName(roomName);
     let chatRoomObj = new chat_room(roomName);
-    avialbleChatrooms[roomName] = chatRoomObj
+    avialbleChatrooms.set(roomName, chatRoomObj);
+    console.log("created a chat room "+roomName)
     return chatRoomObj;
 }
 const doesChatRoomExsists = roomName => {
-    return (map.get(roomName)!==undefined)
+    return (avialbleChatrooms.get(roomName)!==undefined)
 }
 const addRoomToGivenName = name => "room" + name;
 
@@ -75,7 +79,7 @@ const getUsersFromChatRoom = (chatRoom) => chatRoom.getUsers();
 
 const addConnectionToExsistingRoom = (roomName) => {
     if (doesChatRoomExsists(roomName)) {
-        return avialbleChatrooms[roomName];
+        return avialbleChatrooms.get(roomName);
     } else {
         return createAPrivateChatRoom(pathname);
     }
@@ -93,14 +97,15 @@ server.on('upgrade', function upgrade(request, socket, head) {
     try {
         const pathname = url.parse(request.url).pathname.substr(1);
         if (!authenticate(request)) {
-            console.log("destorying the socket")
+            //console.log("destorying the socket")
             socket.destroy();
         }
         else {
             let obj;
             if (doesChatRoomExsists(pathname)) {
                 obj = addConnectionToExsistingRoom(pathname);
-                console.log("added new user to  room: " + pathname)
+                //console.log("Available Users are "+obj.availableUsers.length);
+                //console.log("added new user to  room: " + pathname)
                 let wssObj = obj.getMasterConnection();
                 obj.sendMsgToAllUsers("new user has joined the chat");
                 wssObj.handleUpgrade(request, socket, head, (ws) => {

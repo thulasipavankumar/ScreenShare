@@ -1,3 +1,4 @@
+let _isCanvasBusy = false;
 const displayImage = function (imageData) {
 
     try {
@@ -26,7 +27,9 @@ var drawImageFromString = function (obj) {
     var canvasNJB = document.getElementById("canvas");
     var ctx = canvasNJB.getContext("2d");
     try {
-        
+        if(_isCanvasBusy)
+        return ;
+        _isCanvasBusy = true;
         var height = 637;
         var width = 1019;
         var xBound = 0;
@@ -38,8 +41,10 @@ var drawImageFromString = function (obj) {
         ctx.imageSmoothingEnabled = false;
         ///* pavan   
         ctx.drawImage(obj.imageElement, xBound, yBound, width, height);
+        _isCanvasBusy= false;
     } catch (err) {
         logger.log("error in drawing image: " + err.message);
+        _isCanvasBusy= false;
     }
 }
 function _base64ToArrayBuffer(base64) {
@@ -188,7 +193,7 @@ this.initializeHandlers = function () {
 }
 let onOpen = function (msg) {
     console.log("new Connection");
-    displayInTextBox("displayArea", "Welcome to Chat Arena , <br>Let's the fun Begin <br>!(^_^)!")
+    displayInTextBox("displayArea", "Welcome to Screen Share, <br>Copyright  <h3>Pavan Kumar Tulasi............¯\\_(ツ)_/¯  <h3> ")
 }
 var gotMessage = function (msg) {
     let receivedData = JSON.parse(msg.data);
