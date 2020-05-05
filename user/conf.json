@@ -6,7 +6,7 @@
     "secret":"pavan",
     "session_name":"pavan-MacBook-Air",
     "ws_protocol":"ws://",
-    "FPS":"10",
+    "FPS":"500",
     "note":"FPS is in every milli secs"
     },
     "prod":{
@@ -18,7 +18,7 @@
         "_server_address":"https://screen-share-kotu.herokuapp.com/createSession",
         "ws_protocol":"wss://",
         "_server":"https://screen-share-kotu.herokuapp.com/",
-        "FPS":"10",
+        "FPS":"100",
         "note":"FPS is in every milli secs"
     }
 }

@@ -1,4 +1,4 @@
-const conf = require("./conf").dev;
+const conf = require("./conf").prod;
 
 const path = conf.server_address;
 const axios = require("axios");
@@ -16,7 +16,8 @@ const repeat = (serverSocket) => {
          let jsonMsg = {};
          
          jsonMsg.image = base64data;
-         serverSocket.send(JSON.stringify(jsonMsg));
+         if(serverSocket.readyState==1)
+            serverSocket.send(JSON.stringify(jsonMsg));
      }).catch((err) => {
          console.log("error in promise", err)
          // ...
