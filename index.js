@@ -20,8 +20,12 @@ const sessionParser = session({
  // app.use(sessionParser);  
  let  avialbleChatrooms= new Map()
 app.get('/', (req, res) => {
+    res.send("Welcome to my website");
+   // res.sendFile(__dirname + '/public/html/screen.html');
+})
+app.get('/greet', (req, res) => {
    
-    res.sendFile(__dirname + '/public/html/screen.html');
+    res.send("Hello World! Iam alive");
 })
 app.get(/pavan/, function (req, res) {
     console.log(req.originalUrl);

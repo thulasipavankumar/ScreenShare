@@ -7,10 +7,9 @@ const websocketEndPoint = conf.ws_protocol+conf.raw+"/"+conf.session_name;
 const WebSocket = require('ws');
 
 const repeat = (serverSocket) => {
-    /* do what ever you want but call executor once you are done with everything */
+   
     screenshot({ format: 'jpg' }).then((img) => {
-        // console.log("created  new  room: " + pathname)	                // img: Buffer filled with jpg goodness
-         // ...
+        
          let buff = new Buffer(img);
          let base64data = buff.toString('base64');
          let jsonMsg = {};
@@ -20,7 +19,7 @@ const repeat = (serverSocket) => {
             serverSocket.send(JSON.stringify(jsonMsg));
      }).catch((err) => {
          console.log("error in promise", err)
-         // ...
+        
      })    
 }
 axios.post(path, {
