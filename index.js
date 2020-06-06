@@ -20,13 +20,30 @@ const sessionParser = session({
  // app.use(sessionParser);  
  let  avialbleChatrooms= new Map()
 app.get('/', (req, res) => {
-    res.send("Welcome to my website");
-   // res.sendFile(__dirname + '/public/html/screen.html');
+    
+    res.sendFile(__dirname + '/public/html/homepage.html');
 })
+
+
 app.get('/greet', (req, res) => {
    
     res.send("Hello World! Iam alive");
 })
+
+
+app.get('/broadcast', (req, res) => {
+   
+    res.sendFile(__dirname + '/public/html/broadcast.html');
+})
+
+
+app.get('/viewscreen', (req, res) => {
+   
+    res.sendFile(__dirname + '/public/html/viewscreen.html');
+})
+
+
+
 app.get(/pavan/, function (req, res) {
     console.log(req.originalUrl);
     res.sendFile(__dirname + '/public/html/screen.html');
