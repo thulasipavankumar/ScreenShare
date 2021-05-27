@@ -6,6 +6,9 @@ const WebSocket = require('ws')
 const chat_room = require('./chat_room');
 const url = require('url');
 const uuid = require('uuid');
+const log4js = require("log4js");
+const logger = log4js.getLogger("index");
+logger.level = "debug"; 
 const port = process.env.PORT || 8080
 const app = express()
 let server = require('http').createServer(app);
@@ -45,12 +48,12 @@ app.get('/viewscreen', (req, res) => {
 
 
 app.get(/pavan/, function (req, res) {
-    console.log(req.originalUrl);
+    logger.debug(req.originalUrl);
     res.sendFile(__dirname + '/public/html/screen.html');
   })
 app.get('/session',(req,res)=>{
     const id = uuid.v4();
-    console.log(`Updating session for user ${id}`);
+    logger.debug(`Updating session for user ${id}`);
     req.session.userId = id;
     res.send({ result: 'OK', message: 'Session updated' });
 })
@@ -68,11 +71,11 @@ app.post('/createSession', function (req, res) {
 const createAPrivateChatRoom = (roomName) => {
     //ceate and return a new chat room;
     //let r = Math.random().toString(36).substring(7);
-    // console.log("random", r);
+    // logger.debug("random", r);
     // let newChatRoomName =  addRoomToGivenName(roomName);
     let chatRoomObj = new chat_room(roomName);
     avialbleChatrooms.set(roomName, chatRoomObj);
-    console.log("created a chat room "+roomName)
+    logger.debug("created a chat room "+roomName)
     return chatRoomObj;
 }
 const doesChatRoomExsists = roomName => {
@@ -118,15 +121,15 @@ server.on('upgrade', function upgrade(request, socket, head) {
     try {
         const pathname = url.parse(request.url).pathname.substr(1);
         if (!authenticate(request)) {
-            //console.log("destorying the socket")
+            //logger.debug("destorying the socket")
             socket.destroy();
         }
         else {
             let obj;
             if (doesChatRoomExsists(pathname)) {
                 obj = addConnectionToExsistingRoom(pathname);
-                //console.log("Available Users are "+obj.availableUsers.length);
-                //console.log("added new user to  room: " + pathname)
+                //logger.debug("Available Users are "+obj.availableUsers.length);
+                //logger.debug("added new user to  room: " + pathname)
                 let wssObj = obj.getMasterConnection();
                 obj.sendMsgToAllUsers("new user has joined the chat");
                 wssObj.handleUpgrade(request, socket, head, (ws) => {
@@ -138,7 +141,7 @@ server.on('upgrade', function upgrade(request, socket, head) {
            
         }
     } catch (err) {
-        console.log("error in req upgrade", err);
+        logger.error(`error in req upgrade ${err}`);
     }
 });
 

@@ -1,12 +1,19 @@
 const WebSocket = require('ws');
 const screenshot = require('screenshot-desktop');
-           
+var log4js = require("log4js");
+var logger = log4js.getLogger("chat_room");
+logger.level = "debug";          
 class chat_room {
   roomName;
   availableUsers = [];
   wss;
   constructor(roomName) {
-    console.log("constructor for new room ", roomName)
+    
+    if(this.is_string_null_or_empty(roomName))
+      throw new Error("room name cannot be empty")
+    if(this.is_object_string(roomName))
+    throw new Error("room name must be string type")
+    logger.debug("constructor for new room ", roomName)
     //https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
     this.roomName = roomName;
     this.wss = new WebSocket.Server({ noServer: true });
@@ -18,6 +25,8 @@ class chat_room {
       this.addUserToTheExsistingList(ws)
     })
   }
+  is_string_null_or_empty = str => (str===undefined||str.length===0)
+  is_object_string = val => (typeof val === 'string' || val instanceof String)
   addUserToTheExsistingList = (user) => {
     this.availableUsers.push(user);
   }
@@ -28,13 +37,13 @@ class chat_room {
     // pending 
   }
   clientOnOpen = () => {
-    console.log("opened a new connection");
+    logger.debug("opened a new connection");
   }
   print = data => {
-    console.log(data);
+    logger.debug(data);
   }
   clientOnError = errData => {
-    console.log("error in ws", errData)
+    logger.fatal(`error in websocker ${errData} , ${JSON.stringify(errData)} ` );e
   }
   clientOnMessage = (data) => {
     //https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
@@ -72,13 +81,13 @@ class chat_room {
       }else
       return false;
     });
-   // console.log("after removing stale users count: "+this.availableUsers.length);
+   // logger.debug("after removing stale users count: "+this.availableUsers.length);
   }
 
   clientOnClose = (closingCode, reason) => {
 
     //https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
-    console.log("closed in ws:" + closingCode + "," + reason);
+    logger.debug("closed in ws:" + closingCode + "," + reason);
     //delete user from the list
     this.sendMsgToAllUsers("A user disconnected ")
   }

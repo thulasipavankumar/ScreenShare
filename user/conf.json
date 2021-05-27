@@ -14,7 +14,7 @@
         "server":"https://screen-share-kotu.herokuapp.com/",
         "raw":"screen-share-kotu.herokuapp.com",
         "secret":"pavan",
-        "session_name":"pavan-MacBook-Air",
+        "session_name":"mac",
         "_server_address":"https://screen-share-kotu.herokuapp.com/createSession",
         "ws_protocol":"wss://",
         "_server":"https://screen-share-kotu.herokuapp.com/",
