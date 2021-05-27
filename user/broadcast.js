@@ -1,7 +1,7 @@
 var log4js = require("log4js");
 var logger = log4js.getLogger("broadcast");
 logger.level = "debug";
-const conf = require("./conf").prod;
+const conf = require("./conf").dev;
 
 const path = conf.server_address;
 const axios = require("axios");
