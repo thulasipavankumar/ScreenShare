@@ -5,7 +5,7 @@ const {
 	Validator,
 	ValidationError,
 } = require("express-json-validator-middleware");
-const conf = require("./conf").dev;
+const conf = require("./conf").prod;
 const { validate } = new Validator();
 const http = require('http')
 const WebSocket = require('ws')
