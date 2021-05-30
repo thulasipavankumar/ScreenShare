@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node index.js"
+    "start": "node index.js",
+    "broadcast":"node user/broadcast.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "axios": "^0.19.2",
     "desktop-screenshot": "^0.1.1",
     "express": "^4.17.1",
+    "express-json-validator-middleware": "^2.1.1",
     "express-session": "^1.17.1",
     "http": "0.0.1-security",
     "jest": "^27.0.1",

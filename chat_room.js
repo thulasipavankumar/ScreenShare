@@ -11,7 +11,7 @@ class chat_room {
     
     if(this.is_string_null_or_empty(roomName))
       throw new Error("room name cannot be empty")
-    if(this.is_object_string(roomName))
+    if(!this.is_object_string(roomName))
     throw new Error("room name must be string type")
     logger.debug("constructor for new room ", roomName)
     //https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
@@ -34,7 +34,11 @@ class chat_room {
   getChatRoomName = () => this.roomName;
   getAllUsers = () => this.availableUsers;
   deleteUserFromList = (userData) => {
-    // pending 
+    try{
+      delete this.availableUsers[this.availableUsers.findIndex(ele => ele ===userData)]
+    }catch(e){
+      logger.error(`unable to delete ${userData} from the user list: ${e} , ${JSON.stringify(e)}`)
+    }
   }
   clientOnOpen = () => {
     logger.debug("opened a new connection");
@@ -43,7 +47,7 @@ class chat_room {
     logger.debug(data);
   }
   clientOnError = errData => {
-    logger.fatal(`error in websocker ${errData} , ${JSON.stringify(errData)} ` );e
+    logger.fatal(`error in websocker ${errData} , ${JSON.stringify(errData)} ` );
   }
   clientOnMessage = (data) => {
     //https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
@@ -75,12 +79,7 @@ class chat_room {
     })
   }
   removeStaleUsersFromTheList = () => {
-    this.availableUsers = this.availableUsers.filter(user => {
-      if(user.readyState === 0 || user.readyState === 1){
-        return true;
-      }else
-      return false;
-    });
+    this.availableUsers = this.availableUsers.filter(user => (user.readyState === 0 || user.readyState === 1));
    // logger.debug("after removing stale users count: "+this.availableUsers.length);
   }
 
